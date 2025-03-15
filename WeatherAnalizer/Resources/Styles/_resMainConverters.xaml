@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:WeatherAnalizer.Converters">
+    
+    
+    
+    <converters:BooleanToVisibilityConverter  x:Key="converter_BoolToVisible" />
+    <converters:BooleanToVisibilityConverterReverse  x:Key="converter_BoolToVisibleReverse" />
+    
+</ResourceDictionary>

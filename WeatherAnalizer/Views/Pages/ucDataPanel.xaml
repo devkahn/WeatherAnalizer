@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="WeatherAnalizer.Views.Pages.ucDataPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WeatherAnalizer.Views.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{StaticResource color_Primary}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource color_Gray3}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="CornerRadius" Value="5,5,0,0" />
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                
+            </Grid>
+        </Border>
+        <TabControl Grid.Row="1" TabStripPlacement="Bottom">
+          
+
+        </TabControl>
+    </Grid>
+</UserControl>

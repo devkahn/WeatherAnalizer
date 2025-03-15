@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="subStyle_Border.xaml"/>
+        <ResourceDictionary Source="subStyle_Button.xaml"/>
+        <ResourceDictionary Source="subStyle_RadioButton.xaml"/>
+        <ResourceDictionary Source="subStyle_ScrollViewer.xaml"/>
+        <ResourceDictionary Source="subStyle_TabControl.xaml"/>
+        <ResourceDictionary Source="subStyle_TextBlock.xaml"/>
+        <ResourceDictionary Source="subStyle_ToggleButton.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>
