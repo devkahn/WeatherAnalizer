@@ -8,28 +8,96 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition MinHeight="30" Height="auto" MaxHeight="70"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0">
+        <!--<Border Grid.Row="0">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="{StaticResource color_Primary}"/>
                     <Setter Property="BorderBrush" Value="{StaticResource color_Gray3}"/>
                     <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="CornerRadius" Value="5,5,0,0" />
+                    <Setter Property="CornerRadius" Value="5" />
                 </Style>
             </Border.Style>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="30"/>
                 </Grid.ColumnDefinitions>
                 
             </Grid>
-        </Border>
+        </Border>-->
+        <ToggleButton Grid.Row="0">
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton">
+                    <Setter Property="Background" Value="{StaticResource color_Primary}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource color_Primary}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Height" Value="35"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="bounder" CornerRadius="5,5,0,0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" CornerRadius="5,0,0,0" Height="35" VerticalAlignment="Top">
+                                            <TextBlock x:Name="title" Text="날씨 데이터" Foreground="White" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,10,0"/>
+                                        </Border>
+                                        <Grid Grid.Column="1" MinHeight="35" VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,5,0">
+                                                <TextBlock Text="현장 주소" Foreground="{StaticResource color_Gray3}" FontWeight="Bold"/>
+                                                <TextBlock Text="서울시 강동구 명일동 230-7번지 외 3" Foreground="{StaticResource color_Gray2}" Margin="5,0,5,0" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <ToggleButton Grid.Column="2" x:Name="toggle" IsChecked="{TemplateBinding IsChecked}" >
+                                            <ToggleButton.Style>
+                                                <Style TargetType="ToggleButton" BasedOn="{StaticResource baseStyle_FoldVertical_ToggleButton}">
+                                                    <Setter Property="Margin" Value="0,0,5,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                                    <Setter Property="Width" Value="35"/>
+                                                    <Setter Property="Height" Value="35"/>
+                                                    
+                                                </Style>
+                                            </ToggleButton.Style>
+                                        </ToggleButton>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="bounder" Property="CornerRadius" Value="5"/>
+                                        <Setter TargetName="title" Property="Foreground" Value="{StaticResource color_Primary}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            
+                            <Setter Property="Height" Value="65"/>
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource color_Gray3}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
+        
+        
         <TabControl Grid.Row="1" TabStripPlacement="Bottom">
-          
+            <TabItem Header="head">
+                <local:ucDataWeatherByStation/>
+            </TabItem>
+            <TabItem Header="head2">
+                
+            </TabItem>
 
         </TabControl>
     </Grid>

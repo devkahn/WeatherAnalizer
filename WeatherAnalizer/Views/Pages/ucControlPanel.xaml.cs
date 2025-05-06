@@ -14,7 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WeatherAnalizer.Commons;
 using WeatherAnalizer.Helpers;
+using WeatherAnalizer.Models.ViewModels;
 
 namespace WeatherAnalizer.Views.Pages
 {
@@ -52,13 +54,15 @@ namespace WeatherAnalizer.Views.Pages
             InitializeHourCombo();
             InitializeSummerCombo();
             InitializeWinterCombo();
+
+            this.DataContext = ProgramValues.AnalizeSetting;
         }
 
 
 
         private void InitializeYearCombo()
         {
-            int thisYear =DateTime.Now.Year;
+            int thisYear = DateTime.Now.Year;
             for (int i = 2015; i < thisYear; i++)
             {
                 ComboBoxItem newItem = null;
@@ -68,14 +72,21 @@ namespace WeatherAnalizer.Views.Pages
                     newItem.Uid = i.ToString();
                     newItem.Content = i.ToString();
 
-                    if(j == 0) this.StartYears.Add(newItem);    
-                    else if(j == 1)  this.FinishYears.Add(newItem); 
+                    if (j == 0)
+                    {
+                        this.StartYears.Add(newItem);
+                    }
+                    else if (j == 1)
+                    {
+                        this.FinishYears.Add(newItem);
+                    }
                 }
             }
 
             this.combo_YearStart.ItemsSource = this.StartYears;
+            this.combo_YearStart.SelectedValue = ProgramValues.AnalizeSetting.Data.YearRangeFrom;
             this.combo_YearFinish.ItemsSource = this.FinishYears;
-            this.radio_Year_Recent5.IsChecked = true;
+            this.combo_YearFinish.SelectedItem = ProgramValues.AnalizeSetting.Data.YearRangeTo;
         }
         private void InitializeMonthCombo()
         {
@@ -94,8 +105,9 @@ namespace WeatherAnalizer.Views.Pages
             }
 
             this.combo_MonthStart.ItemsSource = this.StartMonths;
+            this.combo_MonthStart.SelectedValue = ProgramValues.AnalizeSetting.Data.MonthRangeFrom;
             this.combo_MonthFinish.ItemsSource = this.FinishMonths;
-            this.radio_Month_All.IsChecked = true;  
+            this.combo_MonthFinish.SelectedValue = ProgramValues.AnalizeSetting.Data.MonthRangeTo;
         }
         private void InitializeHourCombo()
         {
@@ -114,8 +126,10 @@ namespace WeatherAnalizer.Views.Pages
             }
 
             this.combo_HourStart.ItemsSource = this.StartHours;
+            this.combo_HourStart.SelectedValue = ProgramValues.AnalizeSetting.Data.HourRangeFrom;
             this.combo_HourFinish.ItemsSource = this.FinishHours;
-            this.radio_Hour_517.IsChecked = true;   
+            this.combo_HourFinish.SelectedValue = ProgramValues.AnalizeSetting.Data.HourRangeTo;
+            
         }
         private void InitializeSummerCombo()
         {
@@ -370,6 +384,18 @@ namespace WeatherAnalizer.Views.Pages
             try
             {
                 if (!IsStandardValid()) return;
+
+                List<vmPublicWeatherStation> stationList = ProgramValues.Stations;
+
+                foreach (vmPublicWeatherStation station in stationList)
+                {
+                    if (!station.HasWeatherData()) station.SetWeatherData();
+
+                  //  station.Calculation();
+
+
+                }
+
             }
             catch (Exception ee)
             {

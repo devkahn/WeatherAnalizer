@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace WeatherAnalizer.Models.DataModels
 {
-    public class mWeatherAnalize : mBaseModel
+    public class mGeoCoordinate
     {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+
     }
 }

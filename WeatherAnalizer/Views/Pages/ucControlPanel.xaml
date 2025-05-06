@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WeatherAnalizer.Views.Pages"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
     <UserControl.Resources>
         <Style x:Key="style_ValuePanel_StackPanel" TargetType="StackPanel">
             <Setter Property="Orientation" Value="Vertical"/>
@@ -61,7 +60,7 @@
             <Setter Property="Margin" Value="5,0,3,0"/>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" MaxWidth="50"/>
             <ColumnDefinition Width="auto"/>
@@ -176,15 +175,15 @@
                             <TextBlock Grid.Column="1" Grid.Row="0" Text="연도 설정" Style="{StaticResource style_Title_Textblock}"/>
                             <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}">
                                 <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="yearRadio" Width="60" Uid="-1"  Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Width="60" x:Name="radio_Year_Recent5" Uid="105"  Content="최근 5년" Style="{StaticResource baseStyle_Center_RadioButton}"  Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Width="60" Uid="103"  Content="최근 3년" Style="{StaticResource baseStyle_Center_RadioButton}"  Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Width="60" Uid="999"  Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  Checked="radio_Year_Checked"/>
+                                    <RadioButton GroupName="yearRadio" Uid="-1"  Width="60" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"      IsChecked="{Binding Display_YearRange_All}" Checked="radio_Year_Checked"/>
+                                    <RadioButton GroupName="yearRadio" Uid="105" Width="60" Content="최근 5년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_5}"  Checked="radio_Year_Checked"/>
+                                    <RadioButton GroupName="yearRadio" Uid="103" Width="60" Content="최근 3년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_3}"  Checked="radio_Year_Checked"/>
+                                    <RadioButton GroupName="yearRadio" Uid="999" Width="60" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_YearRange_User}" Checked="radio_Year_Checked"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <ComboBox x:Name="combo_YearStart" Style="{StaticResource style_Value_Combobox}"/>
+                                    <ComboBox x:Name="combo_YearStart" Style="{StaticResource style_Value_Combobox}" />
                                     <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                    <ComboBox x:Name="combo_YearFinish" Style="{StaticResource style_Value_Combobox}"/>
+                                    <ComboBox x:Name="combo_YearFinish" Style="{StaticResource style_Value_Combobox}" />
                                 </StackPanel>
 
                             </StackPanel>
@@ -193,15 +192,15 @@
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="월 설정" Style="{StaticResource style_Title_Textblock}"/>
                             <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}">
                                 <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="-1" x:Name="radio_Month_All"  Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="101" Content="하절기" Style="{StaticResource baseStyle_Center_RadioButton}"  Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="201"  Content="동절기" Style="{StaticResource baseStyle_Center_RadioButton}"  Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="999"  Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  Checked="radio_Month_Checked"/>
+                                    <RadioButton GroupName="monthRadio" Width="60" Uid="-1"  Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"   IsChecked="{Binding Display_MonthRange_All}" Checked="radio_Month_Checked"/>
+                                    <RadioButton GroupName="monthRadio" Width="60" Uid="101" Content="하절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Summer}" Checked="radio_Month_Checked"/>
+                                    <RadioButton GroupName="monthRadio" Width="60" Uid="201" Content="동절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Winter}" Checked="radio_Month_Checked"/>
+                                    <RadioButton GroupName="monthRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_MonthRange_User}" Checked="radio_Month_Checked"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <ComboBox x:Name="combo_MonthStart" Style="{StaticResource style_Value_Combobox}"/>
+                                    <ComboBox x:Name="combo_MonthStart" Style="{StaticResource style_Value_Combobox}" />
                                     <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                    <ComboBox x:Name="combo_MonthFinish" Style="{StaticResource style_Value_Combobox}"/>
+                                    <ComboBox x:Name="combo_MonthFinish" Style="{StaticResource style_Value_Combobox}" />
                                 </StackPanel>
                             </StackPanel>
                             <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
@@ -209,9 +208,9 @@
                             <TextBlock Grid.Column="1" Grid.Row="2" Text="시간 설정" Style="{StaticResource style_Title_Textblock}"/>
                             <StackPanel Grid.Column="2" Grid.Row="2" Style="{StaticResource style_ValuePanel_StackPanel}">
                                 <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="-1" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" Checked="radio_Hour_Checked"/>
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="105" x:Name="radio_Hour_517" Content="근로 시간" Style="{StaticResource baseStyle_Center_RadioButton}" Checked="radio_Hour_Checked"/>
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  Checked="radio_Hour_Checked"/>
+                                    <RadioButton GroupName="hourRadio" Width="60" Uid="-1" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" IsChecked="{Binding Display_HourRange_All}" Checked="radio_Hour_Checked"/>
+                                    <RadioButton GroupName="hourRadio" Width="60" Uid="105" x:Name="radio_Hour_517" Content="근로 시간" Style="{StaticResource baseStyle_Center_RadioButton}" IsChecked="{Binding Display_HourRange_Working}" Checked="radio_Hour_Checked"/>
+                                    <RadioButton GroupName="hourRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  IsChecked="{Binding Display_HourRange_User}" Checked="radio_Hour_Checked"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <ComboBox x:Name="combo_HourStart" Style="{StaticResource style_Value_Combobox}" />
@@ -246,44 +245,46 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"/>
+                                <RowDefinition Height="35"/>
                                 <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="35"/>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="40"/>
                             </Grid.RowDefinitions>
 
 
-                            <CheckBox Grid.Column="1" Grid.Row="0" x:Name="checkbox_SummerPeriod" Content="혹서기" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_SummerPeriod}">
-                                <ComboBox x:Name="combo_SummerStart" Style="{StaticResource style_Value_Combobox}"/>
-                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_SummerPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                <ComboBox x:Name="combo_SummerFinish" Style="{StaticResource style_Value_Combobox}"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="0" Style="{StaticResource style_Divide_Border}"/>
-
-                            <CheckBox Grid.Column="1" Grid.Row="1" x:Name="checkbox_WinterPeriod" Content="동절기" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_WinterPeriod}">
-                                <ComboBox x:Name="combo_WinterStart" Style="{StaticResource style_Value_Combobox}"/>
-                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_WinterPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                <ComboBox x:Name="combo_WinterFinish" Style="{StaticResource style_Value_Combobox}"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
-
-                            <CheckBox Grid.Column="1" Grid.Row="2" x:Name="checkbox_HighTemper" Content="최고 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="2" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}">
+                            <CheckBox Grid.Column="1" Grid.Row="0" x:Name="checkbox_HighTemper" Content="최고 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
+                            <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}">
                                 <TextBox x:Name="txtbox_MaxTemper" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"/>
                                 <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"   Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"/>
                             </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="2" Style="{StaticResource style_Divide_Border}"/>
+                            <CheckBox Grid.Column="1" Grid.Row="1" x:Name="checkbox_SummerPeriod" Content="혹서기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}"
+                                      Initialized="CheckBox_Initialized"/>
+                            <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_SummerPeriod}" Margin="10,-3,5,5">
+                                <ComboBox x:Name="combo_SummerStart" Style="{StaticResource style_Value_Combobox}" Width="50"/>
+                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_SummerPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                <ComboBox x:Name="combo_SummerFinish" Style="{StaticResource style_Value_Combobox}" Width="50"/>
+                            </StackPanel>
+                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
 
-                            <CheckBox Grid.Column="1" Grid.Row="3" x:Name="checkbox_LowTemper" Content="최저 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}">
+
+                            <CheckBox Grid.Column="1" Grid.Row="2" x:Name="checkbox_LowTemper" Content="최저 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
+                            <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}">
                                 <TextBox x:Name="txtbox_MinTemper"  Style="{StaticResource style_NumberInput_Textbox}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"/>
                                 <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"/>
                             </StackPanel>
+                            <CheckBox Grid.Column="1" Grid.Row="3" x:Name="checkbox_WinterPeriod" Content="동절기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0"  IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}"
+                                      Initialized="CheckBox_Initialized"/>
+                            <StackPanel Grid.Column="2" Grid.Row="3" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_WinterPeriod}" Margin="10,-3,5,5">
+                                <ComboBox x:Name="combo_WinterStart" Style="{StaticResource style_Value_Combobox}" Width="50"/>
+                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_WinterPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                <ComboBox x:Name="combo_WinterFinish" Style="{StaticResource style_Value_Combobox}" Width="50"/>
+                            </StackPanel>
                             <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="3" Style="{StaticResource style_Divide_Border}"/>
+
+
+
 
 
                             <CheckBox Grid.Column="1" Grid.Row="4" x:Name="checkbox_Rainy" Content="강우량"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>

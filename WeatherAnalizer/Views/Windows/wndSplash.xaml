@@ -5,8 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherAnalizer.Views.Windows"
         mc:Ignorable="d"
-        Title="wndSplash" Height="450" Width="800">
-    <Grid>
-        
+        Title="Weather Analyzer Loading" WindowStartupLocation="CenterOwner" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        >
+    <Grid Width="500" Height="500" >
+        <Image Source="/Resources/Images/rainy-day.png" Margin="-25" />
+        <StackPanel Orientation="Vertical" Width="400" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,10,10,15">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="Margin" Value="0,2,0,1"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock Text="{Binding Display_MainStatusMessage}" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Display_SubStatusMessage}"  FontSize="12"/>
+        </StackPanel>
     </Grid>
+
 </Window>

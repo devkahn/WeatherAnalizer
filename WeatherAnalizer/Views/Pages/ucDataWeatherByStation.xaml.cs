@@ -12,30 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WeatherAnalizer.Helpers;
 
 namespace WeatherAnalizer.Views.Pages
 {
     /// <summary>
-    /// ucMain.xaml에 대한 상호 작용 논리
+    /// ucDataWeatherByStation.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ucMain : UserControl
+    public partial class ucDataWeatherByStation : UserControl
     {
-        public ucMain()
+        public ucDataWeatherByStation()
         {
             InitializeComponent();
-        }
-
-        private void btn_Load_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-
-            }
-            catch (Exception ee)
-            {
-                ErrorHelper.ShowErrorLog(ee, false);
-            }
         }
     }
 }

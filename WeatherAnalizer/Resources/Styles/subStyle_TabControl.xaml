@@ -1,12 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="_resMainColors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
     <Style TargetType="TabItem">
-        <Setter Property="HeaderTemplate">
+        <Setter Property="Header">
             <Setter.Value>
-                <DataTemplate>
-                    <ContentPresenter Content="{Binding Header}"/>
-                </DataTemplate>
+                <Border CornerRadius="0,0,5,5" Background="{Binding }"/>
             </Setter.Value>
         </Setter>
+        
     </Style>
 </ResourceDictionary>
