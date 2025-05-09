@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WeatherAnalizer.Views.Pages"
+             MaxWidth="400"
              >
     <UserControl.Resources>
         <Style x:Key="style_ValuePanel_StackPanel" TargetType="StackPanel">
@@ -17,9 +18,10 @@
             <Setter Property="Margin" Value="0,13,5,0"/>
         </Style>
         <Style x:Key="style_Divide_Border" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource color_Gray2}"/>
+            <Setter Property="Background" Value="{StaticResource color_Gray3}"/>
             <Setter Property="Height" Value="1"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Opacity" Value="0.5"/>
         </Style>
         <Style x:Key="style_Value_Combobox" TargetType="ComboBox">
             <Setter Property="Width" Value="100"/>
@@ -115,9 +117,6 @@
                 </Grid>
             </Border>
         </Grid>
-
-
-
         <Grid Grid.Column="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold, Converter={StaticResource converter_BoolToVisibleReverse}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -143,175 +142,333 @@
                     <RowDefinition/>
                     <RowDefinition Height="45"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" VerticalAlignment="Top" Margin="0,0,0,5">
-                    <Grid Margin="0,0,0,15">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Grid.Row="0" VerticalAlignment="Top" Margin="0,0,0,5">
+                        <Grid Margin="0,0,0,15">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-                        <Border Grid.Row="0" Background="{StaticResource color_Gray2}">
-                            <Grid>
+                            <Border Grid.Row="0" Background="{StaticResource color_Gray2}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton Grid.Column="0" x:Name="toggle_PanelFold_DateFilter" Style="{StaticResource baseStyle_FoldVertical_ToggleButton}" />
+                                    <TextBlock Grid.Column="1" Text="데이터 기준 설정" FontSize="13" FontWeight="Bold" Margin="0,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold_DateFilter, Converter={StaticResource converter_BoolToVisibleReverse}}">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding ActualWidth, ElementName=toggle_PanelFold_DateFilter}"/>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <ToggleButton Grid.Column="0" x:Name="toggle_PanelFold_DateFilter" Style="{StaticResource baseStyle_FoldVertical_ToggleButton}" />
-                                <TextBlock Grid.Column="1" Text="데이터 기준 설정" FontSize="13" FontWeight="Bold" Margin="0,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80"/>
+                                    <RowDefinition Height="80"/>
+                                    <RowDefinition Height="80"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Column="1" Grid.Row="0" Text="연도 설정" Style="{StaticResource style_Title_Textblock}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}">
+                                    <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
+                                        <RadioButton GroupName="yearRadio" Uid="-1"  Width="60" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"      IsChecked="{Binding Display_YearRange_All}" Checked="radio_Year_Checked"/>
+                                        <RadioButton GroupName="yearRadio" Uid="105" Width="60" Content="최근 5년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_5}"  Checked="radio_Year_Checked"/>
+                                        <RadioButton GroupName="yearRadio" Uid="103" Width="60" Content="최근 3년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_3}"  Checked="radio_Year_Checked"/>
+                                        <RadioButton GroupName="yearRadio" Uid="999" Width="60" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_YearRange_User}" Checked="radio_Year_Checked"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ComboBox x:Name="combo_YearStart" Style="{StaticResource style_Value_Combobox}" />
+                                        <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                        <ComboBox x:Name="combo_YearFinish" Style="{StaticResource style_Value_Combobox}" />
+                                    </StackPanel>
+
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="0" Style="{StaticResource style_Divide_Border}"/>
+
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="월 설정" Style="{StaticResource style_Title_Textblock}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}">
+                                    <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
+                                        <RadioButton GroupName="monthRadio" Width="60" Uid="-1"  Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"   IsChecked="{Binding Display_MonthRange_All}" Checked="radio_Month_Checked"/>
+                                        <RadioButton GroupName="monthRadio" Width="60" Uid="101" Content="하절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Summer}" Checked="radio_Month_Checked"/>
+                                        <RadioButton GroupName="monthRadio" Width="60" Uid="201" Content="동절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Winter}" Checked="radio_Month_Checked"/>
+                                        <RadioButton GroupName="monthRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_MonthRange_User}" Checked="radio_Month_Checked"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ComboBox x:Name="combo_MonthStart" Style="{StaticResource style_Value_Combobox}" />
+                                        <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                        <ComboBox x:Name="combo_MonthFinish" Style="{StaticResource style_Value_Combobox}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
+
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="시간 설정" Style="{StaticResource style_Title_Textblock}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="2" Style="{StaticResource style_ValuePanel_StackPanel}">
+                                    <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
+                                        <RadioButton GroupName="hourRadio" Width="60" Uid="-1" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" IsChecked="{Binding Display_HourRange_All}" Checked="radio_Hour_Checked"/>
+                                        <RadioButton GroupName="hourRadio" Width="60" Uid="105" x:Name="radio_Hour_517" Content="근로 시간" Style="{StaticResource baseStyle_Center_RadioButton}" IsChecked="{Binding Display_HourRange_Working}" Checked="radio_Hour_Checked"/>
+                                        <RadioButton GroupName="hourRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  IsChecked="{Binding Display_HourRange_User}" Checked="radio_Hour_Checked"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ComboBox x:Name="combo_HourStart" Style="{StaticResource style_Value_Combobox}" />
+                                        <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                        <ComboBox x:Name="combo_HourFinish" Style="{StaticResource style_Value_Combobox}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="2" Style="{StaticResource style_Divide_Border}"/>
                             </Grid>
-                        </Border>
-                        <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold_DateFilter, Converter={StaticResource converter_BoolToVisibleReverse}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=toggle_PanelFold_DateFilter}"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+                        </Grid>
+                        <Grid Margin="0,0,0,15">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="80"/>
-                                <RowDefinition Height="80"/>
-                                <RowDefinition Height="80"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Column="1" Grid.Row="0" Text="연도 설정" Style="{StaticResource style_Title_Textblock}"/>
-                            <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}">
-                                <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="yearRadio" Uid="-1"  Width="60" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"      IsChecked="{Binding Display_YearRange_All}" Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Uid="105" Width="60" Content="최근 5년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_5}"  Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Uid="103" Width="60" Content="최근 3년" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_YearRange_3}"  Checked="radio_Year_Checked"/>
-                                    <RadioButton GroupName="yearRadio" Uid="999" Width="60" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_YearRange_User}" Checked="radio_Year_Checked"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <ComboBox x:Name="combo_YearStart" Style="{StaticResource style_Value_Combobox}" />
-                                    <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                    <ComboBox x:Name="combo_YearFinish" Style="{StaticResource style_Value_Combobox}" />
-                                </StackPanel>
-
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="0" Style="{StaticResource style_Divide_Border}"/>
-
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="월 설정" Style="{StaticResource style_Title_Textblock}"/>
-                            <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}">
-                                <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="-1"  Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"   IsChecked="{Binding Display_MonthRange_All}" Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="101" Content="하절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Summer}" Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="201" Content="동절기" Style="{StaticResource baseStyle_Center_RadioButton}"  IsChecked="{Binding Display_MonthRange_Winter}" Checked="radio_Month_Checked"/>
-                                    <RadioButton GroupName="monthRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_MonthRange_User}" Checked="radio_Month_Checked"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <ComboBox x:Name="combo_MonthStart" Style="{StaticResource style_Value_Combobox}" />
-                                    <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                    <ComboBox x:Name="combo_MonthFinish" Style="{StaticResource style_Value_Combobox}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
-
-                            <TextBlock Grid.Column="1" Grid.Row="2" Text="시간 설정" Style="{StaticResource style_Title_Textblock}"/>
-                            <StackPanel Grid.Column="2" Grid.Row="2" Style="{StaticResource style_ValuePanel_StackPanel}">
-                                <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="-1" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}" IsChecked="{Binding Display_HourRange_All}" Checked="radio_Hour_Checked"/>
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="105" x:Name="radio_Hour_517" Content="근로 시간" Style="{StaticResource baseStyle_Center_RadioButton}" IsChecked="{Binding Display_HourRange_Working}" Checked="radio_Hour_Checked"/>
-                                    <RadioButton GroupName="hourRadio" Width="60" Uid="999" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}"  IsChecked="{Binding Display_HourRange_User}" Checked="radio_Hour_Checked"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <ComboBox x:Name="combo_HourStart" Style="{StaticResource style_Value_Combobox}" />
-                                    <TextBlock Text="~" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                    <ComboBox x:Name="combo_HourFinish" Style="{StaticResource style_Value_Combobox}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="2" Style="{StaticResource style_Divide_Border}"/>
-                        </Grid>
-                    </Grid>
-                    <Grid Margin="0,0,0,15">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-
-                        <Border Grid.Row="0" Background="{StaticResource color_Gray2}">
-                            <Grid>
+                            <Border Grid.Row="0" Background="{StaticResource color_Gray2}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton Grid.Column="0" x:Name="toggle_PanelFold_WeatherFilter" Style="{StaticResource baseStyle_FoldVertical_ToggleButton}" />
+                                    <CheckBox Grid.Column="1" x:Name="checkbox_AllStandard" Content="날씨 기준 설정" FontSize="13" FontWeight="Bold" Margin="0,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left" Checked="checkbox_AllStandard_Checked" Unchecked="checkbox_AllStandard_Checked"/>
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold_WeatherFilter, Converter={StaticResource converter_BoolToVisibleReverse}}">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding ActualWidth, ElementName=toggle_PanelFold_DateFilter}"/>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <ToggleButton Grid.Column="0" x:Name="toggle_PanelFold_WeatherFilter" Style="{StaticResource baseStyle_FoldVertical_ToggleButton}" />
-                                <CheckBox Grid.Column="1" x:Name="checkbox_AllStandard" Content="날씨 기준 설정" FontSize="13" FontWeight="Bold" Margin="0,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left" Checked="checkbox_AllStandard_Checked" Unchecked="checkbox_AllStandard_Checked"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="40"/>
+                                </Grid.RowDefinitions>
+
+
+                                <CheckBox Grid.Column="1" Grid.Row="0" x:Name="checkbox_HighTemper" Content="최고 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized" IsChecked="{Binding Display_IsMaxTemperature}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}">
+                                    <TextBox x:Name="txtbox_MaxTemper" Text="{Binding Display_MaxTemperature}" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"
+                                             LostFocus="txtbox_Setting_LostFocus"/>
+                                    <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"   Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Grid.Row="1" x:Name="checkbox_SummerPeriod" Content="혹서기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}"
+                                      Initialized="CheckBox_Initialized" IsChecked="{Binding Display_IsHotSummerRange}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_SummerPeriod}" Margin="10,-3,5,5">
+                                    <ComboBox x:Name="combo_SummerStart" Style="{StaticResource style_Value_Combobox}" IsReadOnly="True" Width="50"/>
+                                    <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_SummerPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                    <ComboBox x:Name="combo_SummerFinish" Style="{StaticResource style_Value_Combobox}" IsReadOnly="True" Width="50"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
+
+
+                                <CheckBox Grid.Column="1" Grid.Row="2" x:Name="checkbox_LowTemper" Content="최저 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"  IsChecked="{Binding Display_IsMinTemperature}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}">
+                                    <TextBox x:Name="txtbox_MinTemper" Text="{Binding Display_MinTemperature}"  Style="{StaticResource style_NumberInput_Textbox}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"
+                                             LostFocus="txtbox_Setting_LostFocus"/>
+                                    <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Grid.Row="3" x:Name="checkbox_WinterPeriod" Content="동절기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0"  IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}"
+                                      Initialized="CheckBox_Initialized" IsChecked="{Binding Display_IsStringWinterRange}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="3" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_WinterPeriod}" Margin="10,-3,5,5">
+                                    <ComboBox x:Name="combo_WinterStart" Style="{StaticResource style_Value_Combobox}" IsReadOnly="True" Width="50"/>
+                                    <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_WinterPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
+                                    <ComboBox x:Name="combo_WinterFinish" Style="{StaticResource style_Value_Combobox}" IsReadOnly="True" Width="50"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="3" Style="{StaticResource style_Divide_Border}"/>
+
+
+
+
+
+                                <CheckBox Grid.Column="1" Grid.Row="4" x:Name="checkbox_Rainy" Content="강우량"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized" IsChecked="{Binding Display_RainAmount}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Rainy}">
+                                    <TextBox x:Name="txtbox_Rainy" Text="{Binding Display_RainAmount}" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_Rainy}"
+                                             LostFocus="txtbox_Setting_LostFocus"/>
+                                    <TextBlock Text="mm" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_Rainy}"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="4" Style="{StaticResource style_Divide_Border}"/>
+
+                                <CheckBox Grid.Column="1" Grid.Row="5" x:Name="checkbox_Snow" Content="적설량"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized" IsChecked="{Binding Display_SnowDepth}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="5" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Snow}">
+                                    <TextBox x:Name="txtbox_SnowDepth" Text="{Binding Display_SnowDepth}" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_Snow}"
+                                             LostFocus="txtbox_Setting_LostFocus"/>
+                                    <TextBlock Text="mm" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_Snow}"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="5" Style="{StaticResource style_Divide_Border}"/>
+
+                                <CheckBox Grid.Column="1" Grid.Row="6" x:Name="checkbox_MaxWind" Content="최대 풍속"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized" IsChecked="{Binding Display_MaxWindSpeed}"/>
+                                <StackPanel Grid.Column="2" Grid.Row="6" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Snow}">
+                                    <TextBox x:Name="txtbox_WIndSpeed" Text="{Binding Display_MaxWindSpeed}" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_MaxWind}"
+                                             LostFocus="txtbox_Setting_LostFocus"/>
+                                    <TextBlock Text="m/s" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_MaxWind}"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="6" Style="{StaticResource style_Divide_Border}"/>
                             </Grid>
-                        </Border>
-                        <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold_WeatherFilter, Converter={StaticResource converter_BoolToVisibleReverse}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=toggle_PanelFold_DateFilter}"/>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+
+
+                        </Grid>
+                        <Grid Margin="0,0,0,15">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
 
+                            <Border Grid.Row="0" Background="{StaticResource color_Gray2}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton Grid.Column="0" x:Name="toggle_PanelFold_FieldAddress" Style="{StaticResource baseStyle_FoldVertical_ToggleButton}" />
+                                    <TextBlock Grid.Column="1" Text="현장 정보 설정" FontSize="13" FontWeight="Bold" Margin="0,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=toggle_PanelFold_FieldAddress, Converter={StaticResource converter_BoolToVisibleReverse}}">
+                                <Grid.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="BorderBrush" Value="{StaticResource color_Gray3}"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="CornerRadius" Value="3"/>
+                                        <Setter Property="MinHeight" Value="30"/>
+                                    </Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="IsReadOnly" Value="True"/>
+                                        <Setter Property="Margin" Value="3,3,0,3"/>
+                                        <Setter Property="MaxWidth" Value="360"/>
+                                        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="10"/>
+                                        <Setter Property="Foreground" Value="{StaticResource color_Gray3}"/>
+                                        <Setter Property="Margin" Value="7,5,5,5"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding ActualWidth, ElementName=toggle_PanelFold_DateFilter}"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" Grid.ColumnSpan="10"  Grid.Row="0" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                                        <TextBlock Grid.Column="1" Grid.Row="0" Text="현장 주소" Style="{StaticResource style_Title_Textblock}"/>
+                                        <Border>
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="DarkGreen"/>
+                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                    <Setter Property="Margin" Value="3,0,3,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Bottom"/>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAddressValid}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="유효" FontSize="9" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3"/>
+                                        </Border>
+                                        <Button Grid.Column="2" Grid.Row="0" Content="주소 검색" Visibility="Collapsed">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="BorderBrush" Value="{StaticResource color_Gray3}"/>
+                                                    <Setter Property="BorderThickness" Value="1"/>
+                                                    <Setter Property="FontSize" Value="10"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource color_Gray4}"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="Margin" Value="0,10,5,0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                    <ContentPresenter Content="{TemplateBinding Content}" Margin="5,3,5,3"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
+                                    <Grid Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Margin="0,0,5,5" >
+                                        <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" MinHeight="30" Margin="0,5,0,0">
+                                            <Grid >
+                                                <TextBlock Text="현장 대지 주소"/>
+                                                <TextBox Text="{Binding Display_Address }" IsReadOnly="False" LostFocus="TextBox_LostFocus"/>
+                                            </Grid>
 
-                            <CheckBox Grid.Column="1" Grid.Row="0" x:Name="checkbox_HighTemper" Content="최고 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}">
-                                <TextBox x:Name="txtbox_MaxTemper" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"/>
-                                <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"   Foreground="{Binding Foreground, ElementName=checkbox_HighTemper}"/>
-                            </StackPanel>
-                            <CheckBox Grid.Column="1" Grid.Row="1" x:Name="checkbox_SummerPeriod" Content="혹서기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0" IsEnabled="{Binding IsChecked, ElementName=checkbox_HighTemper}"
-                                      Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_SummerPeriod}" Margin="10,-3,5,5">
-                                <ComboBox x:Name="combo_SummerStart" Style="{StaticResource style_Value_Combobox}" Width="50"/>
-                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_SummerPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                <ComboBox x:Name="combo_SummerFinish" Style="{StaticResource style_Value_Combobox}" Width="50"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
+                                        </Border>
+                                        <!--<Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" MinHeight="30" Margin="0,3,0,5">
+                                            <Grid>
+                                                <TextBlock Text="상세 주소"/>
+                                                <TextBox x:Name="textbox_Location" Text="15-102" IsReadOnly="False"/>
+                                            </Grid>
+                                        </Border>-->
+                                    </Grid>
+                                    <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" Style="{StaticResource style_Divide_Border}"/>
+                                </Grid>
+                                <Grid Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource style_Title_Textblock}">
+                                        관측소 수
+                                    </TextBlock>
+                                    <StackPanel Grid.Column="1" Grid.Row="0" Style="{StaticResource style_ValuePanel_StackPanel}">
+                                        <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,7">
+                                            <RadioButton GroupName="stationCnt" Uid="-1"  Width="60" Content="전체" Style="{StaticResource baseStyle_LeftEnd_RadioButton}"      IsChecked="{Binding Display_StationCount_All}" Checked="radio_stationCnt_Checked"/>
+                                            <RadioButton GroupName="stationCnt" Uid="510" Width="60" Content="10개" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_StationCount_10}"  Checked="radio_stationCnt_Checked"/>
+                                            <RadioButton GroupName="stationCnt" Uid="505" Width="60" Content="5개" Style="{StaticResource baseStyle_Center_RadioButton}"   IsChecked="{Binding Display_StationCount_5}"  Checked="radio_stationCnt_Checked"/>
+                                            <RadioButton GroupName="stationCnt" Uid="999" Width="60" Content="임의 설정" Style="{StaticResource baseStyle_RightEnd_RadioButton}" IsChecked="{Binding Display_StationCount_User}" Checked="radio_stationCnt_Checked"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" MinHeight="30" Margin="0,3,0,5">
+                                            <Grid>
+                                                <TextBlock Text="관측소 수"/>
+                                                <TextBox x:Name="textbox_StationCount" Text="{Binding Display_StationCount}" IsReadOnly="False"
+                                                         PreviewTextInput="TextBox_PreviewTextInput2" LostFocus="textbox_StationCount_LostFocus"/>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                    <Border Grid.Column="0" Grid.ColumnSpan="10" Grid.Row="0" Style="{StaticResource style_Divide_Border}"/>
+                                </Grid>
+                            </Grid>
 
 
-                            <CheckBox Grid.Column="1" Grid.Row="2" x:Name="checkbox_LowTemper" Content="최저 기온" Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}">
-                                <TextBox x:Name="txtbox_MinTemper"  Style="{StaticResource style_NumberInput_Textbox}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"/>
-                                <TextBlock Text="℃" Style="{StaticResource style_Unit_Textblock}"  Foreground="{Binding Foreground, ElementName=checkbox_LowTemper}"/>
-                            </StackPanel>
-                            <CheckBox Grid.Column="1" Grid.Row="3" x:Name="checkbox_WinterPeriod" Content="동절기" Style="{StaticResource style_Standard_Checkbox}" Margin="15,-8,0,0"  IsEnabled="{Binding IsChecked, ElementName=checkbox_LowTemper}"
-                                      Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="3" Style="{StaticResource style_ValuePanel_StackPanel}" Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=checkbox_WinterPeriod}" Margin="10,-3,5,5">
-                                <ComboBox x:Name="combo_WinterStart" Style="{StaticResource style_Value_Combobox}" Width="50"/>
-                                <TextBlock Text="~"   Foreground="{Binding Foreground, ElementName=checkbox_WinterPeriod}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,0,15,0"/>
-                                <ComboBox x:Name="combo_WinterFinish" Style="{StaticResource style_Value_Combobox}" Width="50"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="3" Style="{StaticResource style_Divide_Border}"/>
-
-
-
-
-
-                            <CheckBox Grid.Column="1" Grid.Row="4" x:Name="checkbox_Rainy" Content="강우량"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Rainy}">
-                                <TextBox x:Name="txtbox_Rainy" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_Rainy}"/>
-                                <TextBlock Text="mm" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_Rainy}"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="4" Style="{StaticResource style_Divide_Border}"/>
-
-                            <CheckBox Grid.Column="1" Grid.Row="5" x:Name="checkbox_Snow" Content="적설량"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="5" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Snow}">
-                                <TextBox x:Name="txtbox_SnowDepth" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_Snow}"/>
-                                <TextBlock Text="mm" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_Snow}"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="5" Style="{StaticResource style_Divide_Border}"/>
-
-                            <CheckBox Grid.Column="1" Grid.Row="6" x:Name="checkbox_MaxWind" Content="최대 풍속"  Style="{StaticResource style_Standard_Checkbox}" Initialized="CheckBox_Initialized"/>
-                            <StackPanel Grid.Column="2" Grid.Row="6" Orientation="Horizontal" Style="{StaticResource style_ValuePanel_StackPanel}" IsEnabled="{Binding IsChecked, ElementName=checkbox_Snow}">
-                                <TextBox x:Name="txtbox_WIndSpeed" Style="{StaticResource style_NumberInput_Textbox}" Foreground="{Binding Foreground, ElementName=checkbox_MaxWind}"/>
-                                <TextBlock Text="m/s" Style="{StaticResource style_Unit_Textblock}" Foreground="{Binding Foreground, ElementName=checkbox_MaxWind}"/>
-                            </StackPanel>
-                            <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="6" Style="{StaticResource style_Divide_Border}"/>
                         </Grid>
-
-
-                    </Grid>
-                </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
                 <Grid Grid.Row="1">
                     <Button Content="날씨 분석 GO!" Click="btn_Analyzie_Click">
                         <Button.Style>

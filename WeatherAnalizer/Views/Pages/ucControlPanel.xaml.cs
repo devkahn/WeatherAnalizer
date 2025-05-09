@@ -1,9 +1,13 @@
-﻿using System;
+﻿using DLWIZ.Helpers.Data;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +20,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WeatherAnalizer.Commons;
 using WeatherAnalizer.Helpers;
+using WeatherAnalizer.Models.DataModels;
 using WeatherAnalizer.Models.ViewModels;
+using static System.Collections.Specialized.BitVector32;
+using Path = System.IO.Path;
 
 namespace WeatherAnalizer.Views.Pages
 {
@@ -40,13 +47,34 @@ namespace WeatherAnalizer.Views.Pages
         private bool IsSingleStandardCheck { get; set; } = false;
         private List<CheckBox> StandardCheckBoxes { get; set; } = new List<CheckBox>();
 
+        private vmWeather _Weather = null;
+        public vmWeather Weather
+        {
+            get => _Weather;
+            set
+            {
+                _Weather = value;
+                this.DataContext = value.Setting;
+            }
+        }
+
+
         public ucControlPanel()
         {
             InitializeComponent();
             InitializeData();
-            
         }
 
+
+        private bool HasStandard()
+        {
+            if (!this.StandardCheckBoxes.Any(x => x.IsChecked == true))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "설정한 날씨 기준이 없습니다.\n날씨 기준을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
         private void InitializeData()
         {
             InitializeYearCombo();
@@ -54,11 +82,10 @@ namespace WeatherAnalizer.Views.Pages
             InitializeHourCombo();
             InitializeSummerCombo();
             InitializeWinterCombo();
-
-            this.DataContext = ProgramValues.AnalizeSetting;
+            InitializeFieldData();
         }
 
-
+ 
 
         private void InitializeYearCombo()
         {
@@ -84,9 +111,9 @@ namespace WeatherAnalizer.Views.Pages
             }
 
             this.combo_YearStart.ItemsSource = this.StartYears;
-            this.combo_YearStart.SelectedValue = ProgramValues.AnalizeSetting.Data.YearRangeFrom;
+            this.combo_YearStart.SelectedValue = ProgramValues.WeatherData.Setting.Data.YearRangeFrom;
             this.combo_YearFinish.ItemsSource = this.FinishYears;
-            this.combo_YearFinish.SelectedItem = ProgramValues.AnalizeSetting.Data.YearRangeTo;
+            this.combo_YearFinish.SelectedItem = ProgramValues.WeatherData.Setting.Data.YearRangeTo;
         }
         private void InitializeMonthCombo()
         {
@@ -105,11 +132,11 @@ namespace WeatherAnalizer.Views.Pages
             }
 
             this.combo_MonthStart.ItemsSource = this.StartMonths;
-            this.combo_MonthStart.SelectedValue = ProgramValues.AnalizeSetting.Data.MonthRangeFrom;
+            this.combo_MonthStart.SelectedValue = ProgramValues.WeatherData.Setting.Data.MonthRangeFrom;
             this.combo_MonthFinish.ItemsSource = this.FinishMonths;
-            this.combo_MonthFinish.SelectedValue = ProgramValues.AnalizeSetting.Data.MonthRangeTo;
+            this.combo_MonthFinish.SelectedValue = ProgramValues.WeatherData.Setting.Data.MonthRangeTo;
         }
-        private void InitializeHourCombo()
+        private void InitializeHourCombo()          
         {
             for (int i = 0; i <= 24; i++)
             {
@@ -126,9 +153,9 @@ namespace WeatherAnalizer.Views.Pages
             }
 
             this.combo_HourStart.ItemsSource = this.StartHours;
-            this.combo_HourStart.SelectedValue = ProgramValues.AnalizeSetting.Data.HourRangeFrom;
+            this.combo_HourStart.SelectedValue = ProgramValues.WeatherData.Setting.Data.HourRangeFrom;
             this.combo_HourFinish.ItemsSource = this.FinishHours;
-            this.combo_HourFinish.SelectedValue = ProgramValues.AnalizeSetting.Data.HourRangeTo;
+            this.combo_HourFinish.SelectedValue = ProgramValues.WeatherData.Setting.Data.HourRangeTo;
             
         }
         private void InitializeSummerCombo()
@@ -173,6 +200,175 @@ namespace WeatherAnalizer.Views.Pages
             this.combo_WinterFinish.ItemsSource = this.FinishWinter;
             this.combo_WinterFinish.SelectedIndex = 1;
         }
+        private void InitializeFieldData()
+        {
+            
+        }
+        private bool IsStandardValid()
+        {
+            bool output = true;
+
+            if (!IsDataPeriodYearValid()) return false;
+            if (!IsDataPeriodMonthValid()) return false;
+            if (!IsDataPeriodHourValid()) return false;
+
+            if (!HasStandard()) return false;
+            if (this.checkbox_SummerPeriod.IsChecked == true && !IsStandardSummerValid()) return false;
+            if (this.checkbox_WinterPeriod.IsChecked == true && !IsStandardWinterValid()) return false;
+            if (this.checkbox_HighTemper.IsChecked == true && !IsStandardMaxTemper()) return false;
+            if (this.checkbox_LowTemper.IsChecked == true && !IsStandardMinTemper()) return false;
+            if (this.checkbox_Rainy.IsChecked == true && !IsStandardRainy()) return false;
+            if (this.checkbox_Snow.IsChecked == true && !IsStandardSnowDepth()) return false;
+            if (this.checkbox_MaxWind.IsChecked == true && !IsStandardWindSpeed()) return false;
+
+            if (!IsAddressValid()) return false;
+            if(!IsStationCountValid()) return false;
+
+            return output;
+        }
+
+        private bool IsStationCountValid()
+        {
+            if (!int.TryParse(this.textbox_StationCount.Text, out int cnt))
+            {
+                MessageHelper.ShowErrorMessage("관측소 수 오류", "관측소 수 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsAddressValid()
+        {
+            this.Weather.Address = GetAddressInfo(this.Weather.Setting.Display_Address);
+            if (this.Weather.Address == null)
+            {
+                MessageHelper.ShowErrorMessage("현장 주소 오류", "현장 주소 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsStandardWindSpeed()
+        {
+            if (!double.TryParse(this.txtbox_WIndSpeed.Text, out double value))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최대 풍속 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardSnowDepth()
+        {
+            if (!double.TryParse(this.txtbox_SnowDepth.Text, out double value))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "적설량 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardRainy()
+        {
+            if (!double.TryParse(this.txtbox_Rainy.Text, out double value))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "강우량 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardMinTemper()
+        {
+            if (!double.TryParse(this.txtbox_MinTemper.Text, out double value))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최저 기온 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardMaxTemper()
+        {
+            if (!double.TryParse(this.txtbox_MaxTemper.Text, out double value))
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최고 기온 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardWinterValid()
+        {
+            ComboBoxItem start = this.combo_WinterStart.SelectedItem as ComboBoxItem;
+            ComboBoxItem finish = this.combo_WinterFinish.SelectedItem as ComboBoxItem;
+            if (start == null || finish == null)
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "동절기 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsStandardSummerValid()
+        {
+            ComboBoxItem start = this.combo_SummerStart.SelectedItem as ComboBoxItem;
+            ComboBoxItem finish = this.combo_SummerFinish.SelectedItem as ComboBoxItem;
+            if (start == null || finish == null)
+            {
+                MessageHelper.ShowErrorMessage("날씨 기준 오류", "혹서기 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsDataPeriodHourValid()
+        {
+            ComboBoxItem start = this.combo_HourStart.SelectedItem as ComboBoxItem;
+            ComboBoxItem finish = this.combo_HourFinish.SelectedItem as ComboBoxItem;
+            if (start == null || finish == null)
+            {
+                MessageHelper.ShowErrorMessage("Data 기준 오류", "시간 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsDataPeriodMonthValid()
+        {
+            ComboBoxItem start = this.combo_MonthStart.SelectedItem as ComboBoxItem;
+            ComboBoxItem finish = this.combo_MonthFinish.SelectedItem as ComboBoxItem;
+            if (start == null || finish == null)
+            {
+                MessageHelper.ShowErrorMessage("Data 기준 오류", "월 설정을 확인하세요.");
+                return false;
+            }
+            return true;
+        }
+        private bool IsDataPeriodYearValid()
+        {
+            ComboBoxItem start = this.combo_YearStart.SelectedItem as ComboBoxItem;
+            ComboBoxItem finish = this.combo_YearFinish.SelectedItem as ComboBoxItem;
+            if (start == null || finish == null)
+            {
+                MessageHelper.ShowErrorMessage("Data 기준 오류", "연도 설정을 확인하세요.");
+                return false;
+            }
+
+            int startYear = int.Parse(start.Uid);
+            int finishYear = int.Parse(finish.Uid);
+            if (finishYear < startYear)
+            {
+                MessageHelper.ShowErrorMessage("Data 기준 오류", "연도 설정을 확인하세요.");
+                return false;
+            }
+
+            return true;
+        }
+        private mAddress GetAddressInfo(string addressString)
+        {
+            mRequestGeocoordinate req = new mRequestGeocoordinate(addressString);
+            mAddress address = AddressHelper.ReadGeoCoordinateFromAddressString(req);
+            return address;
+        }
+        private List<vmPublicWeatherStation> SetStationListByDistance(mAddress address, List<vmPublicWeatherStation> stationList)
+        {
+            foreach (vmPublicWeatherStation station in stationList) station.DistanceFromSite = SiteHelper.CalculateDistance(address.GeoCooradinate, station.GeoCoorinate);
+            return stationList.OrderBy(x =>  x.DistanceFromSite).ToList();
+        }
+
 
         private void radio_Year_Checked(object sender, RoutedEventArgs e)
         {
@@ -286,6 +482,39 @@ namespace WeatherAnalizer.Views.Pages
 
             }
         }
+        private void radio_stationCnt_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                RadioButton rBtn = sender as RadioButton;
+                if (rBtn == null) return;
+
+                bool isDigit = int.TryParse(rBtn.Uid, out int code);
+                if (!isDigit) code = -1;
+
+                this.textbox_StationCount.IsEnabled = false;
+                switch (code)
+                {
+                    case -1:
+                        this.textbox_StationCount.Text = ProgramValues.Stations.Count.ToString();
+                        break;
+                    case 510:
+                        this.textbox_StationCount.Text = "10";
+                        break;
+                    case 505:
+                        this.textbox_StationCount.Text = "5";
+                        break;
+                    default:
+                        this.textbox_StationCount.IsEnabled = true;
+                        break;
+                }
+            }
+            catch (Exception ee)
+            {
+                ErrorHelper.ShowErrorLog(ee, true);
+
+            }
+        }
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             try
@@ -310,6 +539,26 @@ namespace WeatherAnalizer.Views.Pages
 
             
                 
+            //if (!TextHelper.IsTextNuberic(e.Text)) e.Handled = true;
+        }
+        private void TextBox_PreviewTextInput2(object sender, TextCompositionEventArgs e)
+        {
+            try
+            {
+                TextBox tb = e.OriginalSource as TextBox;
+                if (tb == null) return;
+
+                string value = tb.Text;
+                if (!e.Text.IsTextNumbericElement()) e.Handled = true;
+            }
+            catch (Exception ee)
+            {
+                ErrorHelper.ShowErrorLog(ee, true);
+
+            }
+
+
+
             //if (!TextHelper.IsTextNuberic(e.Text)) e.Handled = true;
         }
         private void checkbox_AllStandard_Checked(object sender, RoutedEventArgs e)
@@ -378,23 +627,25 @@ namespace WeatherAnalizer.Views.Pages
                 
             }
         }
-
-        private void btn_Analyzie_Click(object sender, RoutedEventArgs e)
+        private void btn_UnfoldPanel_Click(object sender, RoutedEventArgs e)
+        {
+            this.toggle_PanelFold.IsChecked = false;
+        }
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (!IsStandardValid()) return;
-
-                List<vmPublicWeatherStation> stationList = ProgramValues.Stations;
-
-                foreach (vmPublicWeatherStation station in stationList)
+                TextBox tb = sender as TextBox;
+                if (tb == null)
                 {
-                    if (!station.HasWeatherData()) station.SetWeatherData();
-
-                  //  station.Calculation();
-
-
+                    ProgramValues.WeatherData.Address = null;
+                    return;
                 }
+
+                string text = tb.Text;
+
+                mAddress address = GetAddressInfo(text);
+                ProgramValues.WeatherData.Address = address;
 
             }
             catch (Exception ee)
@@ -402,162 +653,95 @@ namespace WeatherAnalizer.Views.Pages
                 ErrorHelper.ShowErrorLog(ee, true);
             }
         }
-
-        private bool IsStandardValid()
+        private void textbox_StationCount_LostFocus(object sender, RoutedEventArgs e)
         {
-            bool output = true;
-
-            if (!IsDataPeriodYearValid()) return false;
-            if (!IsDataPeriodMonthValid()) return false;
-            if (!IsDataPeriodHourValid()) return false;
-
-            if (!HasStandard()) return false;
-            if (this.checkbox_SummerPeriod.IsChecked == true && !IsStandardSummerValid()) return false;
-            if (this.checkbox_WinterPeriod.IsChecked == true && !IsStandardWinterValid()) return false;
-            if (this.checkbox_HighTemper.IsChecked == true && !IsStandardMaxTemper()) return false;
-            if (this.checkbox_LowTemper.IsChecked == true && !IsStandardMinTemper()) return false;
-            if (this.checkbox_Rainy.IsChecked == true && !IsStandardRainy()) return false;
-            if (this.checkbox_Snow.IsChecked == true && !IsStandardSnowDepth()) return false;
-            if (this.checkbox_MaxWind.IsChecked == true && !IsStandardWindSpeed()) return false;
-
-            return output;
-        }
-
-        private bool HasStandard()
-        {
-            if (!this.StandardCheckBoxes.Any(x => x.IsChecked == true))
+            try
             {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "설정한 날씨 기준이 없습니다.\n날씨 기준을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
+                TextBox tb = sender as TextBox;
+                if (tb == null) return;
 
-        private bool IsStandardWindSpeed()
-        {
-            if (!double.TryParse(this.txtbox_WIndSpeed.Text, out double value))
+                string text = tb.Text;
+
+                bool isDigit = int.TryParse(text, out int digit);
+                if (!isDigit) return;
+
+                if (digit < 1) tb.Text = "1";
+
+                int cnt = ProgramValues.Stations.Count;
+                if (cnt < digit) tb.Text = cnt.ToString();
+            }
+            catch (Exception ee)
             {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최대 풍속 설정을 확인하세요.");
-                return false;
+                ErrorHelper.ShowErrorLog(ee, true);
             }
-            return true;
         }
-
-        private bool IsStandardSnowDepth()
+        private void txtbox_Setting_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!double.TryParse(this.txtbox_SnowDepth.Text, out double value))
+            try
             {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "적설량 설정을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
+                TextBox tb = sender as TextBox;
+                if(tb == null) return;
 
-        private bool IsStandardRainy()
+                string value = tb.Text;
+
+                bool isDigit = int.TryParse(value, out int digit);
+                if (!isDigit) tb.Text = "0";
+                
+            }
+            catch (Exception ee)
+            {
+                ErrorHelper.ShowErrorLog(ee, true);
+            }
+        }
+        private void btn_Analyzie_Click(object sender, RoutedEventArgs e)
         {
-            if (!double.TryParse(this.txtbox_Rainy.Text, out double value))
+            try
             {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "강우량 설정을 확인하세요.");
-                return false;
+                if (!IsStandardValid()) return;
+                if(!SaveSettingLog())
+                {
+                    string eMsg = "데이터 설정 저장시 오류가 발생하였습니다.\n다시 시도하세요.";
+                    MessageHelper.ShowErrorMessage("데이터 설정값 오류", eMsg);
+                    return;
+                }
+
+                string location = this.Weather.Setting.Display_Address;
+                this.Weather.Address = GetAddressInfo(location);
+                List<vmPublicWeatherStation> stationList = ProgramValues.Stations;
+                if (this.Weather.Address != null) stationList = SetStationListByDistance(this.Weather.Address, stationList);
+
+                int cnt = this.Weather.Setting.Display_StationCount;
+
+                this.Weather.ClearStations();
+                foreach (vmPublicWeatherStation station in stationList)
+                {
+                    if (cnt < 1) break;
+                    this.Weather.AddStations(station);
+                    
+                    cnt--;
+                }
+                Thread.Sleep(5000);
+                foreach (vmPublicWeatherStation station in this.Weather.Stations)
+                {
+                    station.SetWeatherData(this.Weather.Setting);
+                    station.Calculation(this.Weather.Setting);
+                }
             }
-            return true;
+            catch (Exception ee)
+            {
+                ErrorHelper.ShowErrorLog(ee, true);
+            }
         }
 
-        private bool IsStandardMinTemper()
+        private bool SaveSettingLog()
         {
-            if (!double.TryParse(this.txtbox_MinTemper.Text, out double value))
-            {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최저 기온 설정을 확인하세요.");
-                return false;
-            }
-            return true;
+            vmWeatherAnalizeSetting setting = this.Weather.Setting;
+
+            string fileName = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string targetpath = Path.Combine(Defines.BASE_DATA_PROGRAM, fileName+ ".was");
+
+            return JsonHelper.WriteData(targetpath, setting.Data);
         }
-
-        private bool IsStandardMaxTemper()
-        {
-            if (!double.TryParse(this.txtbox_MaxTemper.Text, out double value))
-            {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "최고 기온 설정을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsStandardWinterValid()
-        {
-            ComboBoxItem start = this.combo_WinterStart.SelectedItem as ComboBoxItem;
-            ComboBoxItem finish = this.combo_WinterFinish.SelectedItem as ComboBoxItem;
-            if (start == null || finish == null)
-            {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "동절기 설정을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsStandardSummerValid()
-        {
-            ComboBoxItem start = this.combo_SummerStart.SelectedItem as ComboBoxItem;
-            ComboBoxItem finish = this.combo_SummerFinish.SelectedItem as ComboBoxItem;
-            if (start == null || finish == null)
-            {
-                MessageHelper.ShowErrorMessage("날씨 기준 오류", "혹서기 설정을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsDataPeriodHourValid()
-        {
-            ComboBoxItem start = this.combo_HourStart.SelectedItem as ComboBoxItem;
-            ComboBoxItem finish = this.combo_HourFinish.SelectedItem as ComboBoxItem;
-            if (start == null || finish == null)
-            {
-                MessageHelper.ShowErrorMessage("Data 기준 오류", "시간 설정을 확인하세요.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsDataPeriodMonthValid()
-        {
-            ComboBoxItem start = this.combo_MonthStart.SelectedItem as ComboBoxItem;
-            ComboBoxItem finish = this.combo_MonthFinish.SelectedItem as ComboBoxItem;
-            if (start == null || finish == null)
-            {
-                MessageHelper.ShowErrorMessage("Data 기준 오류", "월 설정을 확인하세요.");
-                return false;
-            }
-            return true; 
-        }
-
-        private bool IsDataPeriodYearValid()
-        {
-            ComboBoxItem start = this.combo_YearStart.SelectedItem as ComboBoxItem;
-            ComboBoxItem finish = this.combo_YearFinish.SelectedItem as ComboBoxItem;
-            if (start == null || finish == null)
-            {
-                MessageHelper.ShowErrorMessage("Data 기준 오류", "연도 설정을 확인하세요.");
-                return false;
-            }
-
-            int startYear = int.Parse(start.Uid);
-            int finishYear = int.Parse(finish.Uid);
-            if(finishYear < startYear)
-            {
-                MessageHelper.ShowErrorMessage("Data 기준 오류", "연도 설정을 확인하세요.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private void btn_UnfoldPanel_Click(object sender, RoutedEventArgs e)
-        {
-            this.toggle_PanelFold.IsChecked = false;
-
-        }
-
     }
 }
 

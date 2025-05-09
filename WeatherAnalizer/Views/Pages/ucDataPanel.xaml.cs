@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WeatherAnalizer.Commons;
+using WeatherAnalizer.Models.ViewModels;
 
 namespace WeatherAnalizer.Views.Pages
 {
@@ -20,6 +22,19 @@ namespace WeatherAnalizer.Views.Pages
     /// </summary>
     public partial class ucDataPanel : UserControl
     {
+        private vmWeather _Weather = null;
+        public vmWeather Weather
+        {
+            get => _Weather;
+            set
+            {
+                _Weather = value;
+                this.DataContext = value;
+               // this.ucDataWeatherByStation.Weather = value;
+            }
+        }
+
+
         public ucDataPanel()
         {
             InitializeComponent();

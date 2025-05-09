@@ -35,6 +35,7 @@ namespace WeatherAnalizer.Models.ViewModels
         private object _Display_WindDay = "-";
         private object _Display_SnowDay = "-";
 
+
     }
     public partial class vmPublicWeatherStation : vmBaseModel
     {
@@ -88,7 +89,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _DistanceFromSite = value;
-                this.Display_DistanceFromSite = Math.Round(value, 3);
+                this.Display_DistanceFromSite = Math.Round(value, 2).ToString("N2");
             }
         }
         public int RainyHoliDay
@@ -207,11 +208,21 @@ namespace WeatherAnalizer.Models.ViewModels
     public partial class vmPublicWeatherStation
     {
         public bool HasWeatherData() => this.WeatherData.Any();
-        public void SetWeatherData()
+        public void SetWeatherData(vmWeatherAnalizeSetting setting)
         {
-            List<mPublicHourlyWeatherData> data = SiteHelper.ReadWeatherDataByStation(this);
+            List<mPublicHourlyWeatherData> data = SiteHelper.ReadWeatherDataByStation(this, setting);
             this.WeatherData = data;
         }
-        
+        internal void Calculation(vmWeatherAnalizeSetting setting)
+        {
+            Dictionary<string, List<mPublicHourlyWeatherData>> dateByDatas = new Dictionary<string, List<mPublicHourlyWeatherData>>();
+            foreach (mPublicHourlyWeatherData item in this.WeatherData)
+            {
+                string key = item.ObserveTime.ToString("MMdd");
+
+                if (!dateByDatas.ContainsKey(key)) dateByDatas.Add(key, new List<mPublicHourlyWeatherData>());
+                dateByDatas[key].Add(item); 
+            }
+        }
     }
 }

@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WeatherAnalizer.Views.Pages"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <DataGrid>
+             >
+    <DataGrid ItemsSource="{Binding Stations}">
         <DataGrid.Style>
             <Style TargetType="DataGrid">
                 <Setter Property="AutoGenerateColumns" Value="False"/>
+                <Setter Property="AlternatingRowBackground" Value="{StaticResource color_Gray1}"/>
+                <Setter Property="AreRowDetailsFrozen" Value="True"/>
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
@@ -18,13 +19,19 @@
                 <Setter Property="CanUserReorderColumns" Value="False"/>
                 <Setter Property="CanUserResizeColumns" Value="False"/>
                 <Setter Property="CanUserResizeRows" Value="False"/>
-                <Setter Property="CanUserSortColumns" Value="False"/>
+                <Setter Property="CanUserSortColumns" Value="True"/>
                 <Setter Property="ColumnHeaderHeight" Value="27"/>
+                <Setter Property="EnableColumnVirtualization" Value="True"/>
+                <Setter Property="EnableRowVirtualization" Value="True"/>
+                <Setter Property="FrozenColumnCount" Value="4"/>
                 <Setter Property="GridLinesVisibility" Value="Horizontal"/>
                 <Setter Property="HeadersVisibility" Value="Column"/>
                 <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource color_Gray2}"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="IsReadOnly" Value="True"/>
                 <Setter Property="RowHeight" Value="35"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                
             </Style>
         </DataGrid.Style>
         <DataGrid.Resources>
@@ -32,26 +39,108 @@
                 <Setter Property="BorderBrush" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="ContentPresenter">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="10,5,10,5"/>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+            </Style>
+             
         </DataGrid.Resources>
         <DataGrid.Columns>
-            <DataGridTemplateColumn Header="급지"/>
-            <DataGridTemplateColumn Header="관측소"/>
-            <DataGridTemplateColumn Header="주소"/>
-            <DataGridTemplateColumn Header="거리"/>
-            <DataGridTemplateColumn Header="무더위"/>
-            <DataGridTemplateColumn Header="강우"/>
-            <DataGridTemplateColumn Header="강추위"/>
-            <DataGridTemplateColumn Header="강설"/>
-            <DataGridTemplateColumn Header="강풍"/>
-            <DataGridTemplateColumn>
-                <DataGridTemplateColumn.Header>
-                    <Border Width="220" Background="{StaticResource color_Primary}" Height="35">
-                        
-                    </Border>
-                </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn Header="급지" MinWidth="70"  Width="*" >
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding Parent.Display_SiteName}" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="관측소" MinWidth="120" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock Text="{Binding Display_Name}"  VerticalAlignment="Center" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" 
+                                       ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="주소" Width="8*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding Origin.StationAddress}" HorizontalAlignment="Left" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="거리(㎞)" MinWidth="70" Width="*" >
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid HorizontalAlignment="Right">
+                            <ContentPresenter Content="{Binding Display_DistanceFromSite}" HorizontalAlignment="Right" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="무더위" MinWidth="70" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding HotSummerDay}" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="강우" MinWidth="70" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding RainyHoliDay}" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="강추위"  MinWidth="70" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding StrongWinterDay}" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="강설" MinWidth="70" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding SnowHoliDay}" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="강풍" MinWidth="70" Width="2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <ContentPresenter Content="{Binding HeavyWindDay}" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
 
+
         </DataGrid.Columns>
-        1
+
     </DataGrid>
 </UserControl>

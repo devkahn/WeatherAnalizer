@@ -40,7 +40,7 @@ namespace WeatherAnalizer.Helpers
             dist = dist * 60 * 1.1515;
             dist = dist * 1.609344;
 
-            return dist;
+            return dist.Round(2);
         }
         public static List<vmPublicWeatherStation> GetStationViewModels(List<vmSiteLevel> siteLevels)
         {
@@ -158,7 +158,10 @@ namespace WeatherAnalizer.Helpers
             return output;
         }
 
-        public static List<mPublicHourlyWeatherData> ReadWeatherDataByStation(vmPublicWeatherStation station)
+
+
+         
+        public static List<mPublicHourlyWeatherData> ReadWeatherDataByStation(vmPublicWeatherStation station, vmWeatherAnalizeSetting setting = null)
         {
             FileInfo fInfo = station.WeatherDataDBFilePath;
             if (fInfo == null) return null;
@@ -166,12 +169,30 @@ namespace WeatherAnalizer.Helpers
 
             List<mPublicHourlyWeatherData> output = new List<mPublicHourlyWeatherData>();
 
-            string conString = string.Format("Data Source={0};Version=3", fInfo.FullName);
             string tableName = "t_Weather_Hourly";
+            string recentTmQuery = $"SELECT ";
+            foreach (string cn in Defines.LIST_COLUMN_NAMES)
+            {
+                recentTmQuery += cn;
+                if (Defines.LIST_COLUMN_NAMES.Last() != cn) recentTmQuery += ",";
+            }
+            recentTmQuery += $" FROM {tableName}";
+            if(setting != null)
+            {
+                recentTmQuery += " WHERE ";
+                recentTmQuery += $"CAST(strftime('%Y', TM) AS INTEGER) BETWEEN {setting.Data.YearRangeFrom} AND {setting.Data.YearRangeTo} ";
+                recentTmQuery += $"AND CAST(strftime('%m', TM) AS INTEGER) BETWEEN {setting.Data.MonthRangeFrom} AND {setting.Data.MonthRangeTo} ";
+                recentTmQuery += $"AND CAST(strftime('%H', TM) AS INTEGER) BETWEEN {setting.Data.HourRangeFrom} AND {setting.Data.HourRangeTo}";
+            }
+            recentTmQuery += ";";
+
+
+
+            string conString = string.Format("Data Source={0};Version=3", fInfo.FullName);
             using (SQLiteConnection conn = new SQLiteConnection(conString))
             {
                 conn.Open();
-                string recentTmQuery = $"SELECT * FROM {tableName};";
+             
                 
                 using (SQLiteCommand cmd = new SQLiteCommand(recentTmQuery, conn))
                 using (SQLiteDataReader reader = cmd.ExecuteReader())
@@ -190,6 +211,9 @@ namespace WeatherAnalizer.Helpers
                             if (idxAttribute == null) continue;
 
                             string columnName = headerAttr.ColumnValue;
+                            if (!Defines.LIST_COLUMN_NAMES.Contains(columnName)) continue;
+
+
                             int index = idxAttribute.InteagerValue;
                             object obj = reader[columnName];
                             string value = obj == null? string.Empty : obj.ToString();
@@ -253,6 +277,7 @@ namespace WeatherAnalizer.Helpers
 
             return output;
         }
+
         internal static DateTime? ReadLastDateWeatherDataByStation(vmPublicWeatherStation station)
         {
             FileInfo fInfo = station.WeatherDataDBFilePath;
@@ -352,6 +377,7 @@ namespace WeatherAnalizer.Helpers
                 string fullName = p.PropertyType.FullName;
                 if (fullName == typeof(string).FullName) p.SetValue(obj, value);
                 if (fullName == typeof(int).FullName) p.SetValue(obj, int.Parse(value));
+                if (fullName == typeof(double).FullName) p.SetValue(obj, double.Parse(value));
                 if (fullName == typeof(DateTime).FullName) p.SetValue(obj, DateTime.Parse(value));
                 if (fullName == typeof(DateTime?).FullName) if (!string.IsNullOrEmpty(value)) p.SetValue(obj, DateTime.Parse(value));
                 if (fullName == typeof(bool).FullName) p.SetValue(obj, bool.Parse(value));

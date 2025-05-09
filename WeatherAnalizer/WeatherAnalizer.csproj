@@ -130,12 +130,14 @@
     <Compile Include="Commons\ProgramValues.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverterReverse.cs" />
+    <Compile Include="Helpers\AddressHelper.cs" />
     <Compile Include="Helpers\ErrorHelper.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
     <Compile Include="Helpers\NetworkHelper.cs" />
     <Compile Include="Helpers\SiteHelper.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Helpers\WeatherHelper.cs" />
+    <Compile Include="Models\DataModels\mAddress.cs" />
     <Compile Include="Models\DataModels\mBaseModel.cs" />
     <Compile Include="Models\DataModels\mDataBase.cs" />
     <Compile Include="Models\DataModels\mGeoCoordinate.cs" />
@@ -152,7 +154,9 @@
     <Compile Include="Models\ViewModels\vmBaseViewModel.cs" />
     <Compile Include="Models\ViewModels\vmPublicWeatherStation.cs" />
     <Compile Include="Models\ViewModels\vmSiteLevel.cs" />
+    <Compile Include="Models\ViewModels\vmWeather.cs" />
     <Compile Include="Models\ViewModels\vmWeatherAnalizeSetting.cs" />
+    <Compile Include="Models\ViewModels\vmWeatherByDate.cs" />
     <Compile Include="Views\Pages\ucControlPanel.xaml.cs">
       <DependentUpon>ucControlPanel.xaml</DependentUpon>
     </Compile>

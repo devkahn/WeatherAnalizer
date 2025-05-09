@@ -45,17 +45,21 @@
             
             <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" Height="1" Background="{StaticResource color_Gray1}" VerticalAlignment="Center" Margin="5,0,5,0"/>
         </Grid>
-        <ScrollViewer Grid.Row="1">
-            <Grid Grid.Row="1" Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                
-                <local:ucControlPanel Grid.Column="0" Margin="0,0,5,0"/>
-                <local:ucDataPanel Grid.Column="2"/>
+
+        <Grid Grid.Row="1" Margin="5" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=ScrollViewer}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <local:ucControlPanel Grid.Column="0"  x:Name="ucControlPanel" Margin="0,0,5,0"/>
+            <Grid Grid.Column="2">
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+                    <local:ucDataPanel Grid.Column="2" x:Name="ucDatapanel" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=Grid}}"/>
+                </ScrollViewer>
             </Grid>
-        </ScrollViewer>
+        </Grid>
+        
         <Border Grid.Row="2" Background="{StaticResource color_Gray1}">
             <Grid>
                 <Grid.ColumnDefinitions>

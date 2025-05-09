@@ -52,6 +52,7 @@ namespace WeatherAnalizer
                     return;
                 }
 
+                ProgramValues.WeatherData = new vmWeather();
                 wndSplash splash = new wndSplash();
                 splash.Show();
 
@@ -75,6 +76,7 @@ namespace WeatherAnalizer
             if(!Directory.Exists(logDir)) Directory.CreateDirectory(logDir);
             string dbDir = Defines.DATABASE_DIRECTORY;
             if(!Directory.Exists(dbDir)) Directory.CreateDirectory(dbDir);
+            
         }
 
         [DllImport("user32.dll")]

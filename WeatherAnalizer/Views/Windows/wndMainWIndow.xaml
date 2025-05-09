@@ -7,6 +7,6 @@
         xmlns:pages="clr-namespace:WeatherAnalizer.Views.Pages"
         mc:Ignorable="d"
         Title="Weather Analyzer" MinHeight="450" MinWidth="800" WindowStartupLocation="CenterOwner" WindowState="Maximized">
-    <pages:ucMain/>
+    <pages:ucMain x:Name="ucMain"/>
 
 </Window>

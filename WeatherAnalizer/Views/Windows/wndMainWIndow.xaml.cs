@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WeatherAnalizer.Commons;
+using WeatherAnalizer.Models.ViewModels;
 
 namespace WeatherAnalizer.Views.Windows
 {
@@ -19,9 +21,21 @@ namespace WeatherAnalizer.Views.Windows
     /// </summary>
     public partial class wndMainWIndow : Window
     {
+        private vmWeather _Weather = null;
+        public vmWeather Weather
+        {
+            get => _Weather;
+            set
+            {
+                _Weather = value;
+                this.DataContext = value;
+                this.ucMain.Weather = value;
+            }
+        }
         public wndMainWIndow()
         {
             InitializeComponent();
+            this.Weather = ProgramValues.WeatherData;
         }
     }
 }

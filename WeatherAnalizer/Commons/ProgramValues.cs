@@ -11,6 +11,8 @@ namespace WeatherAnalizer.Commons
     {
         public static List<vmPublicWeatherStation> Stations { get; set; } = new List<vmPublicWeatherStation>();
 
-        public static vmWeatherAnalizeSetting AnalizeSetting { get; set; }
+     //   public static vmWeatherAnalizeSetting AnalizeSetting { get; set; }
+
+        public static vmWeather WeatherData { get; set; }
     }
 }

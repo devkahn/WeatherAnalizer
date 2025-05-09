@@ -60,7 +60,7 @@ namespace WeatherAnalizer.Views.Windows
                 isSuccess = SetInitializeDatabase();
 
                 UpdateStatus("날씨 데이터를 초기화 합니다.", 1);
-             //   if (isSuccess) isSuccess = ReadWeatherDataByStations(ProgramValues.Stations);
+                if (isSuccess) isSuccess = ReadWeatherDataByStations(ProgramValues.Stations);
             });
 
             UpdateStatus("프로그램을 시작합니다.", 3);
@@ -68,6 +68,7 @@ namespace WeatherAnalizer.Views.Windows
             if (isSuccess)
             {
                 wndMainWIndow mw = new wndMainWIndow();
+                
                 mw.Show();
                 this.Close();
             }
@@ -79,14 +80,17 @@ namespace WeatherAnalizer.Views.Windows
         {
             UpdateStatus("기본 데이터를 불러옵니다.", 0, false);
             mWeatherAnalizeSetting seeting = null;
-            string analizeSettingFilePath = Path.Combine(Defines.BASE_DATA_PROGRAM, Defines.SETTING_FILE_NAME);
-            if (File.Exists(analizeSettingFilePath))
+
+
+            DirectoryInfo dInfo = new DirectoryInfo(Defines.BASE_DATA_PROGRAM);
+            FileInfo fInfo = dInfo.GetFiles().ToList().Where(x => x.Extension == ".was").OrderBy(x => x.FullName).LastOrDefault();
+            if (fInfo != null && fInfo.Exists)
             {
-                string settingString = File.ReadAllText(analizeSettingFilePath);
+                string settingString = File.ReadAllText(fInfo.FullName);
                 seeting = JsonHelper.ReadData<mWeatherAnalizeSetting>(settingString);
             }
             if (seeting == null) seeting = new mWeatherAnalizeSetting();
-            ProgramValues.AnalizeSetting = new vmWeatherAnalizeSetting(seeting);
+            ProgramValues.WeatherData.Setting = new vmWeatherAnalizeSetting(seeting);
 
 
             UpdateStatus("관측소 정보를 불러옵니다.", 0, false);
