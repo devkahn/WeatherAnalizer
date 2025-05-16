@@ -144,6 +144,7 @@
     <Compile Include="Models\DataModels\mNonWorkDayOfStation.cs" />
     <Compile Include="Models\DataModels\mPublicAdminDistrict.cs" />
     <Compile Include="Models\DataModels\mPublicCity.cs" />
+    <Compile Include="Models\DataModels\mPublicDailyWeatherData.cs" />
     <Compile Include="Models\DataModels\mPublicHourlyWeatherData.cs" />
     <Compile Include="Models\DataModels\mPublicWeatherStation.cs" />
     <Compile Include="Models\DataModels\mResponse.cs" />

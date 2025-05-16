@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shell;
 using WeatherAnalizer.Helpers;
 using WeatherAnalizer.Models.DataModels;
 using SiteHelper = WeatherAnalizer.Helpers.SiteHelper;
@@ -215,13 +217,129 @@ namespace WeatherAnalizer.Models.ViewModels
         }
         internal void Calculation(vmWeatherAnalizeSetting setting)
         {
-            Dictionary<string, List<mPublicHourlyWeatherData>> dateByDatas = new Dictionary<string, List<mPublicHourlyWeatherData>>();
-            foreach (mPublicHourlyWeatherData item in this.WeatherData)
-            {
-                string key = item.ObserveTime.ToString("MMdd");
+            List<mPublicDailyWeatherData> weathers = new List<mPublicDailyWeatherData>();
 
-                if (!dateByDatas.ContainsKey(key)) dateByDatas.Add(key, new List<mPublicHourlyWeatherData>());
-                dateByDatas[key].Add(item); 
+            DateTime startTime = this.WeatherData.First().ObserveTime;
+            DateTime endTime = this.WeatherData.Last().ObserveTime;
+
+            int index = 0;
+            for (DateTime date = startTime; date <= endTime; date = date.AddDays(1))
+            {
+                List<mPublicHourlyWeatherData> tempList = new List<mPublicHourlyWeatherData>();
+                mPublicHourlyWeatherData dayItem = this.WeatherData[index];
+                bool sameDate = dayItem.ObserveTime.Year == date.Year && dayItem.ObserveTime.Month == date.Month && dayItem.ObserveTime.Day == date.Day;
+                while (sameDate)
+                {
+                    tempList.Add(dayItem);
+                    index++;
+
+                    if (this.WeatherData.Count == index) break;
+
+                    dayItem = this.WeatherData[index];
+                    sameDate = dayItem.ObserveTime.Year == date.Year && dayItem.ObserveTime.Month == date.Month && dayItem.ObserveTime.Day == date.Day;
+                }
+
+
+                mPublicDailyWeatherData newItem = new mPublicDailyWeatherData();
+                newItem.DateYear = date.Year;
+                newItem.DateMonth = date.Month;
+                newItem.DateDay = date.Day;
+                //newItem.StationCode = tempList.First().StationCode;
+                #region 최대 풍속
+
+                mPublicHourlyWeatherData maxWindItem = tempList.OrderBy(x => x.WindSpeed).Last();
+                newItem.WindSpeed_Max = maxWindItem.WindSpeed.HasValue ? maxWindItem.WindSpeed.Value : -99;
+                newItem.WindSpeed_Max_Time = int.Parse(maxWindItem.ObserveTime.ToString("HHmm"));
+                newItem.WindDirection_Max = maxWindItem.WindDirection.HasValue ? maxWindItem.WindDirection.Value : -99;
+
+                #endregion
+                #region 기온
+
+                newItem.Temperature_Ave = tempList.Sum(x => x.TemperatureAtomospheric).Value / tempList.Count();
+
+                mPublicHourlyWeatherData maxTempITem = tempList.OrderBy(x => x.TemperatureAtomospheric).Last();
+                newItem.Temperature_Max = maxTempITem.TemperatureAtomospheric.HasValue ? maxTempITem.TemperatureAtomospheric.Value : -99;
+                newItem.Temperature_Max_Time = int.Parse(maxTempITem.ObserveTime.ToString("HHmm"));
+
+                mPublicHourlyWeatherData minTempItem = tempList.OrderBy(x => x.TemperatureAtomospheric).First();
+                newItem.Temperature_Min = minTempItem.TemperatureAtomospheric.HasValue ? minTempItem.TemperatureAtomospheric.Value : -99;
+                newItem.Temperature_Min_Time = int.Parse(minTempItem.ObserveTime.ToString("HHmm"));
+
+                #endregion
+                #region 강수량
+
+                double rainfall = 0;
+
+                for (int i = 0; i < tempList.Count() - 1; i++)
+                {
+                    double valuePrev = 0;
+                    bool hasValuePrev = tempList[i].RainfallOfDayByStatics.HasValue;
+                    if (hasValuePrev) valuePrev = tempList[i].RainfallOfDayByStatics.Value;
+
+                    double valueNext = 0;
+                    bool hasValueNext = tempList[i + 1].RainfallOfDayByStatics.HasValue;
+                    if (hasValueNext) valueNext = tempList[i + 1].RainfallOfDayByStatics.Value;
+
+                    if (hasValueNext && hasValuePrev) rainfall += (valueNext - valuePrev);
+                }
+
+                if (rainfall != 0)
+                {
+
+                }
+
+                newItem.Rain_Total = rainfall;
+                newItem.Rain_99Total = rainfall;
+
+                #endregion
+                #region 누적 적설량
+
+                double snowDepth = 0;
+
+                for (int i = 0; i < tempList.Count() - 1; i++)
+                {
+                    double valuePrev = 0;
+                    bool hasValuePrev = tempList[i].SnowDepthOfDay.HasValue;
+                    if (hasValuePrev) valuePrev = tempList[i].SnowDepthOfDay.Value;
+
+                    double valueNext = 0;
+                    bool hasValueNext = tempList[i + 1].SnowDepthOfDay.HasValue;
+                    if (hasValueNext) valueNext = tempList[i + 1].SnowDepthOfDay.Value;
+
+                    if (hasValueNext && hasValuePrev) snowDepth += (valueNext - valuePrev);
+                }
+
+                if (snowDepth != 0)
+                {
+
+                }
+
+                newItem.Snow_Total_Depth = snowDepth;
+                newItem.Snow_Daily_Total_Depth = snowDepth;
+
+                #endregion
+
+                weathers.Add(newItem);
+            }
+
+            List<vmWeatherByDate> standards = new List<vmWeatherByDate>();
+            foreach (mPublicDailyWeatherData item in weathers)
+            {
+                vmWeatherByDate sameStandard = standards.Where(x => x.Date.Month == item.DateMonth && x.Date.Day == item.DateDay).FirstOrDefault();
+                if (sameStandard == null)
+                {
+                    sameStandard = new vmWeatherByDate(item);
+                    standards.Add(sameStandard);
+                }
+                else
+                {
+                    sameStandard.AddChild(item);
+                }
+            }
+
+            if(true)
+            {
+
             }
         }
     }

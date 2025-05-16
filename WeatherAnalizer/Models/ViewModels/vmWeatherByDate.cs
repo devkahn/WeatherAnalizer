@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WeatherAnalizer.Models.DataModels;
 
 namespace WeatherAnalizer.Models.ViewModels
 {
