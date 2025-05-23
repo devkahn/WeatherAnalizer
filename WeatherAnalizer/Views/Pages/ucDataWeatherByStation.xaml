@@ -97,7 +97,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ContentPresenter Content="{Binding HotSummerDay}" />
+                            <ContentPresenter Content="{Binding Display_HotSummerDay}" HorizontalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -106,7 +106,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ContentPresenter Content="{Binding RainyHoliDay}" />
+                            <ContentPresenter Content="{Binding Display_RainyDay}"  HorizontalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -115,7 +115,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ContentPresenter Content="{Binding StrongWinterDay}" />
+                            <ContentPresenter Content="{Binding Display_StrongWinterDay}"  HorizontalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -124,7 +124,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ContentPresenter Content="{Binding SnowHoliDay}" />
+                            <ContentPresenter Content="{Binding Display_SnowDay}" HorizontalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -133,7 +133,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Grid>
-                            <ContentPresenter Content="{Binding HeavyWindDay}" />
+                            <ContentPresenter Content="{Binding Display_HeavyWindDay}"  HorizontalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>

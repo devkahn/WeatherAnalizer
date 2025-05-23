@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.TextFormatting;
 using WeatherAnalizer.Models.DataModels;
 
 namespace WeatherAnalizer.Models.ViewModels
@@ -50,6 +51,8 @@ namespace WeatherAnalizer.Models.ViewModels
             this.DailyChildrenOrigin.CollectionChanged += DailyChildrenOrigin_CollectionChanged;
 
             this.Date = new DateTime(0004, item.DateMonth, item.DateDay);
+            this.Dispaly_Month = this.Date.Month;
+            this.Dispaly_Day = this.Date.Day;  
             AddChild(item);
         }
 
@@ -145,7 +148,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_WindSpeedMax = value;
-                this.Display_Ave_WindSpeedMax = _Ave_WindSpeedMax;
+                this.Display_Ave_WindSpeedMax = _Ave_WindSpeedMax.ToString("N2");
             }
         }
         public double Ave_TemperatureMax
@@ -154,7 +157,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_TemperatureMax = value;
-                this.Display_Ave_TemperatureMax = _Ave_TemperatureMax;
+                this.Display_Ave_TemperatureMax = _Ave_TemperatureMax.ToString("N2");
             }
         }
         public double Ave_TemperatureAve
@@ -163,7 +166,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_TemperatureAve = value;
-                this.Display_Ave_TemperatureAve = _Ave_TemperatureAve;
+                this.Display_Ave_TemperatureAve = _Ave_TemperatureAve.ToString("N2");
             }
         }
         public double Ave_TemperatureMin
@@ -172,7 +175,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_TemperatureMin = value;
-                this.Display_Ave_TemperatureMin = _Ave_TemperatureMin;
+                this.Display_Ave_TemperatureMin = _Ave_TemperatureMin.ToString("N2");
             }
         }
         public double Ave_RainTotal
@@ -181,7 +184,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_RainTotal = value;
-                this.Display_Ave_RainTotal = _Ave_RainTotal;
+                this.Display_Ave_RainTotal = _Ave_RainTotal.ToString("N2");
             }
         }
         public double Ave_99RainTotal
@@ -190,7 +193,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_99RainTotal = value;
-                this.Display_Ave_99RainTotal = _Ave_99RainTotal;
+                this.Display_Ave_99RainTotal = _Ave_99RainTotal.ToString("N2");
             }
         }
         public double Ave_SnowTotal
@@ -199,7 +202,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_SnowTotal = value;
-                this.Display_Ave_SnowTotal = _Ave_SnowTotal;
+                this.Display_Ave_SnowTotal = _Ave_SnowTotal.ToString("N2");
             }
         }
         public double Ave_DailySnowTotal
@@ -208,7 +211,7 @@ namespace WeatherAnalizer.Models.ViewModels
             set
             {
                 _Ave_DailySnowTotal = value;
-                this.Display_Ave_DailySnowTotal = _Ave_DailySnowTotal;
+                this.Display_Ave_DailySnowTotal = _Ave_DailySnowTotal.ToString("N2");
             }
         }
 

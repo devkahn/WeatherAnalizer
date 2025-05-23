@@ -39,6 +39,7 @@ namespace WeatherAnalizer.Views.Windows
         public wndSplash()
         {
             InitializeComponent();
+            WindowHelper.CenterWindowOnScreen(this);
             this.ViewModel = new SplashWindowViewModel();
             this.ContentRendered += WndSplash_ContentRendered;
         }

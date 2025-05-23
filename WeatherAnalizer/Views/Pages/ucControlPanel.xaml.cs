@@ -496,13 +496,13 @@ namespace WeatherAnalizer.Views.Pages
                 switch (code)
                 {
                     case -1:
-                        this.textbox_StationCount.Text = ProgramValues.Stations.Count.ToString();
+                        this.Weather.Setting.Display_StationCount = ProgramValues.Stations.Count;
                         break;
                     case 510:
-                        this.textbox_StationCount.Text = "10";
+                        this.Weather.Setting.Display_StationCount = 10;
                         break;
                     case 505:
-                        this.textbox_StationCount.Text = "5";
+                        this.Weather.Setting.Display_StationCount = 5;
                         break;
                     default:
                         this.textbox_StationCount.IsEnabled = true;

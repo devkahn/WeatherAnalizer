@@ -422,6 +422,7 @@ namespace WeatherAnalizer.Models.ViewModels
             {
                 _Display_StationCount = value;
                 this.Data.StationCount = value;
+                OnPropertyChanged(nameof(Display_StationCount));
             }
         }
     }

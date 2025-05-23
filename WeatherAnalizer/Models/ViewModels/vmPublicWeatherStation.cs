@@ -3,11 +3,14 @@ using DLWIZ.Helpers.Commons;
 using DLWIZ.ViewModels.Commons;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 using System.Windows.Shell;
 using WeatherAnalizer.Helpers;
 using WeatherAnalizer.Models.DataModels;
@@ -83,7 +86,8 @@ namespace WeatherAnalizer.Models.ViewModels
 
 
         public List<mPublicHourlyWeatherData> WeatherData { get; private set; } = new List<mPublicHourlyWeatherData>();
-
+        public List<mPublicDailyWeatherData> DailyWeatherData { get; private set; } = new List<mPublicDailyWeatherData>();
+        public ObservableCollection<vmWeatherByDate> Standards { get; private set; } = new ObservableCollection<vmWeatherByDate>();
 
         public double DistanceFromSite
         {
@@ -217,11 +221,22 @@ namespace WeatherAnalizer.Models.ViewModels
         }
         internal void Calculation(vmWeatherAnalizeSetting setting)
         {
-            List<mPublicDailyWeatherData> weathers = new List<mPublicDailyWeatherData>();
+            
+
+            if (this.WeatherData == null || this.WeatherData.Count == 0)
+            {
+                this.Display_RainyDay = "-";
+                this.Display_HotSummerDay = "-";
+                this.Display_StrongWinterDay = "-";
+                this.Display_HeavyWindDay = "-";
+                this.Display_SnowDay = "-";
+                return;
+            }
 
             DateTime startTime = this.WeatherData.First().ObserveTime;
             DateTime endTime = this.WeatherData.Last().ObserveTime;
 
+            this.DailyWeatherData.Clear();
             int index = 0;
             for (DateTime date = startTime; date <= endTime; date = date.AddDays(1))
             {
@@ -245,6 +260,11 @@ namespace WeatherAnalizer.Models.ViewModels
                 newItem.DateMonth = date.Month;
                 newItem.DateDay = date.Day;
                 //newItem.StationCode = tempList.First().StationCode;
+
+
+                if (tempList == null || tempList.Count == 0) continue;
+
+
                 #region 최대 풍속
 
                 mPublicHourlyWeatherData maxWindItem = tempList.OrderBy(x => x.WindSpeed).Last();
@@ -319,17 +339,18 @@ namespace WeatherAnalizer.Models.ViewModels
 
                 #endregion
 
-                weathers.Add(newItem);
+                this.DailyWeatherData.Add(newItem);
             }
 
-            List<vmWeatherByDate> standards = new List<vmWeatherByDate>();
-            foreach (mPublicDailyWeatherData item in weathers)
+
+            this.Standards.Clear();
+            foreach (mPublicDailyWeatherData item in this.DailyWeatherData)
             {
-                vmWeatherByDate sameStandard = standards.Where(x => x.Date.Month == item.DateMonth && x.Date.Day == item.DateDay).FirstOrDefault();
+                vmWeatherByDate sameStandard = this.Standards.Where(x => x.Date.Month == item.DateMonth && x.Date.Day == item.DateDay).FirstOrDefault();
                 if (sameStandard == null)
                 {
                     sameStandard = new vmWeatherByDate(item);
-                    standards.Add(sameStandard);
+                    Standards.Add(sameStandard);
                 }
                 else
                 {
@@ -337,10 +358,26 @@ namespace WeatherAnalizer.Models.ViewModels
                 }
             }
 
-            if(true)
-            {
+            int rainDays = 0;
+            int summerDays = 0;
+            int winterDays = 0;
+            int typoonDays = 0;
+            int snowDays = 0;
 
+            foreach (vmWeatherByDate item in Standards)
+            {
+                if (setting.Data.IsMaxTemperature && setting.Data.MaxTemperature <= item.Ave_TemperatureAve) summerDays++;
+                if (setting.Data.IsMinTemperature && item.Ave_TemperatureAve <= setting.Data.MinTemperature) winterDays++;
+                if (setting.Data.MaxWindSpeed <= item.Ave_WindSpeedMax) typoonDays++;
+                if( setting.Data.RainAmount <= item.Ave_RainTotal) rainDays++;  
+                if(setting.Data.SnowDepth <= item.Ave_DailySnowTotal) summerDays++;
             }
+
+            this.Display_RainyDay = rainDays < 0 ? "-" : rainDays.ToString();
+            this.Display_HotSummerDay = summerDays < 0 ? "-" : summerDays.ToString();
+            this.Display_StrongWinterDay = winterDays < 0 ? "-" : winterDays.ToString();
+            this.Display_HeavyWindDay  = typoonDays < 0 ? "-" : typoonDays.ToString();
+            this.Display_SnowDay = snowDays < 0 ? "-" : snowDays.ToString();
         }
     }
 }

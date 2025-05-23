@@ -456,7 +456,7 @@
                                         <Border Grid.Column="1" Grid.ColumnSpan="10" Grid.Row="1" MinHeight="30" Margin="0,3,0,5">
                                             <Grid>
                                                 <TextBlock Text="관측소 수"/>
-                                                <TextBox x:Name="textbox_StationCount" Text="{Binding Display_StationCount}" IsReadOnly="False"
+                                                <TextBox x:Name="textbox_StationCount" Text="{Binding Display_StationCount, Mode=TwoWay}" IsReadOnly="False"
                                                          PreviewTextInput="TextBox_PreviewTextInput2" LostFocus="textbox_StationCount_LostFocus"/>
                                             </Grid>
                                         </Border>

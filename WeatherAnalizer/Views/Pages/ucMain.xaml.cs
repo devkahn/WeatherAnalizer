@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WeatherAnalizer.Helpers;
+using WeatherAnalizer.Models.DataModels;
 using WeatherAnalizer.Models.ViewModels;
 
 namespace WeatherAnalizer.Views.Pages
@@ -49,6 +54,47 @@ namespace WeatherAnalizer.Views.Pages
             catch (Exception ee)
             {
                 ErrorHelper.ShowErrorLog(ee, false);
+            }
+        }
+
+        private void btn_Export_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                OpenFileDialog odf = new OpenFileDialog();
+                bool? result = odf.ShowDialog();
+                if (!result.HasValue || !result.Value) return;
+
+                ExcelPackage package = new ExcelPackage();
+                ExcelWorkbook workbook = package.Workbook;
+
+                foreach (vmPublicWeatherStation station in this.Weather.Stations)
+                {
+                    ExcelWorksheet sheet = workbook.Worksheets.Add(station.Origin.StationName);
+
+                    foreach (mPublicDailyWeatherData item in station.DailyWeatherData)
+                    {
+                        
+                    }
+
+
+
+
+
+
+
+                }
+
+                FileInfo fInfo = new FileInfo(odf.FileName);
+                package.SaveAs(fInfo.FullName);
+
+                Process.Start(fInfo.Directory.FullName);
+
+            }
+            catch (Exception ee)
+            {
+                
+                
             }
         }
     }

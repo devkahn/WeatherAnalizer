@@ -33,7 +33,7 @@
                     <Button Uid="LOAD" Content="LOAD" Click="btn_Load_Click"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <Button Uid="EXPORT" Content="EXPORT"/>
+                    <Button Uid="EXPORT" Content="EXPORT" Click="btn_Export_Click"/>
                 </StackPanel>
                 
             </StackPanel>
@@ -54,9 +54,7 @@
 
             <local:ucControlPanel Grid.Column="0"  x:Name="ucControlPanel" Margin="0,0,5,0"/>
             <Grid Grid.Column="2">
-                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
-                    <local:ucDataPanel Grid.Column="2" x:Name="ucDatapanel" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=Grid}}"/>
-                </ScrollViewer>
+                <local:ucDataPanel Grid.Column="2" x:Name="ucDatapanel" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=Grid}}"/>
             </Grid>
         </Grid>
         

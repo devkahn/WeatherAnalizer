@@ -106,9 +106,8 @@
                 <local:ucDataWeatherByStation Grid.Row="1" x:Name="ucDataWeatherByStation" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=TabControl}}"/>
             </TabItem>
             <TabItem Header="head2">
-                
+                <local:ucDataWeatherByDaily Grid.Row="1" x:Name="ucDataWeatherByHourly" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=TabControl}}"/>
             </TabItem>
-
         </TabControl>
     </Grid>
 </UserControl>
